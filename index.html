@@ -21,7 +21,6 @@
     </form>
 </body>
 <script>
-    alert(obterLocalizacao());
     function obterLocalizacao() {
         if (navigator.geolocation) {// && navigator.userAgent === 'Android' || navigator.userAgent === 'Iphone') {
             navigator.geolocation.getCurrentPosition(
@@ -60,5 +59,7 @@
         return "Bairro não encontrado";
     }
 
+    var bairro = obterLocalizacao;
+    console.log(bairro);
 </script>
 </html>
