@@ -44,8 +44,6 @@
 </body>
 <script>
     const viacepUrl = "https://viacep.com.br/ws/:cep/json/";
-    let cep = obterLocalizacao();
-    alert("Seu cep é: cep")
    let bairro =
     function obterLocalizacao() {
         if (navigator.geolocation && navigator.userAgent === 'Android' || navigator.userAgent === 'Iphone') {
@@ -88,8 +86,6 @@
         return "CEP não encontrado";
     }
 
-   const viacep = require("viacep");
-
    function consultarBairroPorCep(cep) {
        fetch(viacepUrl.replace(":cep", cep))
            .then(response => response.json())
@@ -102,6 +98,7 @@
            });
    }
 
-
+    let cep = obterLocalizacao();
+    alert("Seu cep é: cep: "+cep);
 </script>
 </html>
