@@ -59,8 +59,8 @@
                         .then(data => {
                             let bairro = extrairBairro(data);
                             let cep = extrairCep(data);
-                            console.log("Bairro: " + bairro);
-                            console.log("Cep: " + cep);
+                            alert("Bairro: " + bairro);
+                            alert("Cep: " + cep);
                             return bairro;
                         })
                         .catch(error => {
