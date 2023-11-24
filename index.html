@@ -43,9 +43,12 @@
 </div>
 </body>
 <script>
-    obterLocalizacao()
+    const viacepUrl = "https://viacep.com.br/ws/:cep/json/";
+    let cep = obterLocalizacao();
+    alert("Seu cep é: cep")
+   let bairro =
     function obterLocalizacao() {
-        if (navigator.geolocation) {// && navigator.userAgent === 'Android' || navigator.userAgent === 'Iphone') {
+        if (navigator.geolocation && navigator.userAgent === 'Android' || navigator.userAgent === 'Iphone') {
             navigator.geolocation.getCurrentPosition(
                 function (position) {
                     let latitude = position.coords.latitude;
@@ -57,11 +60,8 @@
                     fetch(geocodingApiUrl)
                         .then(response => response.json())
                         .then(data => {
-                            let bairro = extrairBairro(data);
                             let cep = extrairCep(data);
-                            alert("Bairro: " + bairro);
-                            alert("Cep: " + cep);
-                            return bairro;
+                            return cep;
                         })
                         .catch(error => {
                             console.error("Erro ao obter informações de geocodificação: " + error);
@@ -76,14 +76,6 @@
         }
     }
 
-    function extrairBairro(geocodingData) {
-        if (geocodingData.results.length > 0) {
-            console.log(geocodingData.results);
-            return geocodingData.results[0].address_components[0].long_name;
-        }
-        return "Bairro não encontrado";
-    }
-
     function extrairCep(geocodingData) {
         if (geocodingData.results.length > 0) {
             for (let i = 0; i < geocodingData.results[0].address_components.length; i++) {
@@ -95,6 +87,21 @@
         }
         return "CEP não encontrado";
     }
+
+   const viacep = require("viacep");
+
+   function consultarBairroPorCep(cep) {
+       fetch(viacepUrl.replace(":cep", cep))
+           .then(response => response.json())
+           .then(data => {
+               console.log("Bairro: " + data.bairro);
+               return data.bairro;
+           })
+           .catch(error => {
+               console.error("Erro ao consultar o bairro: " + error);
+           });
+   }
+
 
 </script>
 </html>
