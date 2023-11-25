@@ -43,23 +43,27 @@
 </div>
 </body>
 <script>
-    const viacepUrl = "https://viacep.com.br/ws/:cep/json/";
-   let bairro =
     function obterLocalizacao() {
-        if (navigator.geolocation && navigator.userAgent === 'Android' || navigator.userAgent === 'Iphone') {
+        const isMobile = navigator.userAgent === 'Android' || navigator.userAgent === 'Iphone';
+        if (navigator.geolocation && isMobile) {
             navigator.geolocation.getCurrentPosition(
                 function (position) {
                     let latitude = position.coords.latitude;
                     let longitude = position.coords.longitude;
 
-                    // Use a API de Geocodificação do Google Maps para obter o bairro
+                    // Use a API de Geocodificação do Google Maps para obter o CEP
                     let geocodingApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyATbuo_zzaHENrFJKKMLzwP6Hu_nzaFUqc`;
 
                     fetch(geocodingApiUrl)
                         .then(response => response.json())
                         .then(data => {
                             let cep = extrairCep(data);
-                            return cep;
+                            console.log(cep);
+                            if (cep != null) {
+                                return consultarBairroPorCep(cep);
+                            } else {
+                                console.error("CEP não encontrado");
+                            }
                         })
                         .catch(error => {
                             console.error("Erro ao obter informações de geocodificação: " + error);
@@ -70,7 +74,7 @@
                 }
             );
         } else {
-            console.error("Geolocalização não suportada pelo navegador.");
+            console.error("Geolocalização não suportada");
         }
     }
 
@@ -78,27 +82,30 @@
         if (geocodingData.results.length > 0) {
             for (let i = 0; i < geocodingData.results[0].address_components.length; i++) {
                 if (geocodingData.results[0].address_components[i].types[0] === "postal_code") {
-                    console.log(geocodingData.results[0].address_components[i].long_name);
                     return geocodingData.results[0].address_components[i].long_name;
                 }
             }
         }
-        return "CEP não encontrado";
+        return null;
     }
 
-   function consultarBairroPorCep(cep) {
-       fetch(viacepUrl.replace(":cep", cep))
-           .then(response => response.json())
-           .then(data => {
-               console.log("Bairro: " + data.bairro);
-               return data.bairro;
-           })
-           .catch(error => {
-               console.error("Erro ao consultar o bairro: " + error);
-           });
-   }
+    function consultarBairroPorCep(cep) {
+        const viacepUrl = "https://viacep.com.br/ws/:cep/json/";
+        fetch(viacepUrl.replace(":cep", cep))
+            .then(response => response.json())
+            .then(data => {
+                if (data.bairro != null && data.bairro !== "") {
+                    return data.bairro;
+                } else {
+                    console.error("Bairro não encontrado para o CEP " + cep);
+                }
+            })
+            .catch(error => {
+                console.error("Erro ao consultar o bairro: " + error);
+            });
+    }
 
-    let cep = obterLocalizacao();
-    alert("Seu cep é: cep: "+cep);
+    let bairro = obterLocalizacao();
+    alert(bairro);
 </script>
 </html>
